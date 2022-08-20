@@ -1,0 +1,208 @@
+{% extends 'shop/dashboard.html' %}
+
+{% block title %} Checkout {% endblock %}
+
+{% block user %} {{uname}} {% endblock %}
+
+{% block body %}
+<div class="container my-3">
+  <main>
+    <div class="row g-5">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Your cart</span>
+          <span class="badge bg-primary rounded-pill" id="totalprds">0</span>
+        </h4>
+        <ul class="list-group mb-3">
+          <span id="checkoutlst">
+            <li class="list-group-item d-flex justify-content-between lh-sm">
+              <div>
+                <h6 class="my-0 text-danger">Your Cart is Empty!!</h6>
+              </div>
+            </li>
+          </span>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total (INR)</span>
+            <strong>&#8377 <span id="total">0</span></strong>
+          </li>
+        </ul>
+
+        <form class="card p-2">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Promo code">
+            <button type="submit" class="btn btn-secondary">Redeem</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-7 col-lg-8">
+        <h4 class="mb-3">Billing address</h4>
+        <form method="post">{% csrf_token %}
+          <div class="row g-3">
+            <input type="hidden" name="items" id="itemlst">
+            <input type="hidden" name="amount" id="totalamount" value=0>
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="firstName" name="name" placeholder="Name" required="true">
+            </div>
+
+            <div class="col-sm-6">
+              <label for="phonenum" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" id="phonenum" name="phone" placeholder="Phone No." required="true">
+            </div>
+
+            <div class="col-12">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required="true">
+            </div>
+
+            <div class="col-12">
+              <label for="address" class="form-label">Address</label>
+              <input type="text" class="form-control" id="address" name="address1" placeholder="1234 Main St" required="true">
+            </div>
+
+            <div class="col-12">
+              <label for="address2" class="form-label">Address 2 <span class="text-muted">(Optional)</span></label>
+              <input type="text" class="form-control" id="address2" name="address2" placeholder="Apartment or suite">
+            </div>
+
+            <div class="col-md-5">
+              <label for="country" class="form-label">Country</label>
+              <input type="text" class="form-control" id="country" name="country" placeholder="Enter Country" required="true">
+            </div>
+
+            <div class="col-md-4">
+              <label for="state" class="form-label">State</label>
+              <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" required="true">
+            </div>
+
+            <div class="col-md-3">
+              <label for="pin" class="form-label">Pincode</label>
+              <input type="number" class="form-control" id="pin" name="pin" placeholder="Enter Pincode" required="true">
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="same-address">
+            <label class="form-check-label" for="same-address">Shipping address is the same as my billing
+              address</label>
+          </div>
+
+          <hr class="my-4">
+
+          <h4 class="mb-3">Payment Method</h4>
+
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="radio" name="choose" id="Switch1" onclick="showpayment(1)" checked>
+            <label class="form-check-label" for="Switch1">Cash On Delivery</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="radio" name="choose" id="Switch2" onclick="showpayment(2)">
+            <label class="form-check-label" for="Switch2">Credit/Debit Card</label>
+          </div>
+          <br>
+          <div class="box" id="card_details" style="display: none;">
+            <h5 class="mb-3">Enter Your Card Details</h5>
+            <div class="my-3">
+              <div class="form-check">
+                <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
+                <label class="form-check-label" for="credit">Credit card</label>
+              </div>
+              <div class="form-check">
+                <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
+                <label class="form-check-label" for="debit">Debit card</label>
+              </div>
+            </div>
+  
+            <div class="row gy-3">
+              <div class="col-md-6">
+                <label for="cc-name" class="form-label">Name on card</label>
+                <input type="text" class="form-control" id="cc-name" name="cardname">
+                <small class="text-muted">Full name as displayed on card</small>
+              </div>
+  
+              <div class="col-md-6">
+                <label for="cc-number" class="form-label">Credit card number</label>
+                <input type="text" class="form-control" id="cc-number" name="cardnumber">
+              </div>
+  
+              <div class="col-md-3">
+                <label for="cc-expiration" class="form-label">Expiration</label>
+                <input type="month" class="form-control" id="cc-expiration" name="cardexp">
+              </div>
+  
+              <div class="col-md-3">
+                <label for="cc-cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" id="cc-cvv" name="cvv">
+              </div>
+            </div>
+          </div>
+
+          <button class="w-40 btn btn-primary btn-lg my-4" type="submit">Place Order</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  var storage3 = localStorage.getItem('cart');
+  if (storage3 == null) {
+    cartlst = {}
+  }
+  else {
+    cartlst = JSON.parse(storage3);
+    checkoutprd(cartlst);
+  }
+  function checkoutprd(cartlst) {
+    var chkout = "";
+    var total_amount = 0;
+    var total_prd = 0;
+    for (var item in cartlst) {
+      total_amount = total_amount + (parseInt(cartlst[item][0]) * parseInt(cartlst[item][2]));
+      total_prd = total_prd + cartlst[item][0];
+      if (cartlst[item][0]>0){
+        chkout = chkout + `<li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <h6 class="my-0">${cartlst[item][1]}</h6>
+                        <small class="text-muted">QTY : ${cartlst[item][0]}</small>
+                    </div>
+                    <span class="text-muted">&#8377 ${cartlst[item][2]}</span>
+                    </li>`;
+      }
+    }
+    document.getElementById('checkoutlst').innerHTML = chkout;
+    document.getElementById('total').innerHTML = total_amount;
+    document.getElementById('totalamount').value = total_amount;
+    document.getElementById('totalprds').innerHTML = total_prd;
+    document.getElementById('itemlst').value = JSON.stringify(cartlst);
+  }
+  
+  function showpayment(val){
+    if (val==1){
+      document.getElementById('card_details').style.display='none';
+      document.getElementById('cc-name').removeAttribute('required');
+      document.getElementById('cc-number').removeAttribute('required');
+      document.getElementById('cc-expiration').removeAttribute('required');
+      document.getElementById('cc-cvv').removeAttribute('required');
+    }
+    else if (val==2){
+      document.getElementById('card_details').style.display='block';
+      document.getElementById('cc-name').setAttribute('required','true');
+      document.getElementById('cc-number').setAttribute('required','true');
+      document.getElementById('cc-expiration').setAttribute('required','true');
+      document.getElementById('cc-cvv').setAttribute('required','true');
+    }
+  }
+</script>
+{% if msg %}
+<script>
+  alert('Thank you for ordering, your order has been placed. Your order id is {{id}}')
+  localStorage.clear()
+  document.location = "/shop"
+</script>
+{% endif %}
+{% endblock %}

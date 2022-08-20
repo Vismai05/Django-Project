@@ -1,0 +1,180 @@
+{% extends 'shop/dashboard.html' %}
+
+{% block title %} E-commerece Website {% endblock %}
+
+{% block user %} {{uname}} {% endblock %}
+
+{% block css %}
+<style>
+  .carousel-indicators .active {
+    opacity: 1;
+    background-color: red;
+  }
+  .card img {
+    height: 280px;
+  }
+  .space {
+    display: flex;
+    padding: 30px;
+    flex-wrap: wrap;
+  }
+  .card {
+    margin: 5px auto 40px auto;
+    width: 18rem;
+  }
+  .content {
+    margin-top: 20px;
+  }
+  @media screen and (max-width: 390px) {
+    .card {
+      margin: 5px auto 40px auto;
+      width: 11rem;
+    }
+    .card img {
+      height: 170px;
+    }
+    .bt1{
+      font-size: 10px !important;
+      width: 60px !important;
+      padding: 10px 0px 10px 0px !important;
+      /* margin: 10px 0px 10px 0px !important; */
+    }
+    .adsub{
+      width: 20px !important;
+      height: 30px !important;
+      padding: 0px !important;
+      margin: 10px 0px 10px 0px !important;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+{% load static %}
+<div class="container content">
+  {% for products, range, nslide in lst %}
+  <h4>{{products.0.prd_cat}}</h4>
+  <div id="carouselExampleIndicators{{forloop.counter}}" class="carousel slide" data-bs-ride="true">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselExampleIndicators{{forloop.counter}}" data-bs-slide-to="0"
+        style="background-color: rgb(255, 35, 35);" class="active" aria-current="true" aria-label="Slide 1"></button>
+      {% for i in range %}
+      <button type="button" data-bs-target="#carouselExampleIndicators{{forloop.parentloop.counter}}"
+        data-bs-slide-to="1" style="background-color: rgb(255, 35, 35);" aria-label="{{i}}"></button>
+      {% endfor %}
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="space">
+          {% for i in products %}
+          <div class="card">
+            <img src="/media/{{i.prd_img}}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title" id="name{{i.id}}">{{i.prd_name}}</h5>
+              <p class="card-text">{{i.prd_des|slice:"0:50"}}.....</p>
+              <p class="card-text"><b>&#8377 <span id="price{{i.id}}">{{i.prd_cost}}</span></b></p>
+              <span id="sp{{i.id}}" class="clearchanges">
+                <a class="btn btn-primary bt1" onclick="addprd('{{i.id}}')">Add To Cart</a>
+              </span>
+              <a href="/shop/product/{{i.id}}" class="btn btn-primary mx-2 bt1">View Item</a>
+            </div>
+          </div>
+          {% if forloop.counter|divisibleby:4 and forloop.counter > 0 and not forloop.last %}
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="space">
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{forloop.counter}}"
+        data-bs-slide="prev" style="background-color: red; width: 30px; height: 30px; margin: auto;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{forloop.counter}}"
+        data-bs-slide="next" style="background-color: red; width: 30px; height: 30px; margin: auto;">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.getElementById('homeactive').classList.add('active');
+
+  var storage2 = localStorage.getItem('cart');
+  if (storage2 == null) {
+    cartlst = {}
+  }
+  else {
+    cartlst = JSON.parse(storage2);
+    updatecart2(cartlst);
+    updatebtn(cartlst);
+  }
+
+  function addprd(prdid) {
+    qty = 1;
+    name = document.getElementById('name' + prdid).innerHTML;
+    price = document.getElementById('price' + prdid).innerHTML;
+    cartlst[prdid] = [qty, name, price];
+    localStorage.setItem('cart', JSON.stringify(cartlst));
+    updatecart(prdid);
+    allprd(cartlst);
+    updatebtn(cartlst);
+  };
+
+  function updatecart(prdid) {
+    document.getElementById('sp' + prdid).innerHTML = `<button id="minus${prdid}" class="btn btn-primary minus adsub" onclick="subtn('${prdid}')">-</button> <span id="val${prdid}"> ${cartlst[prdid][0]} </span> <button id="plus${prdid}" class="btn btn-primary plus adsub" onclick="addtn('${prdid}')">+</button>`
+  };
+
+  function updatecart2(cartlst) {
+    for (var item in cartlst) {
+      if ((document.getElementById('sp' + item) != undefined) && (cartlst[item][0] > 0)) {
+        document.getElementById('sp' + item).innerHTML = `<button id="minus${item}" class="btn btn-primary minus adsub" onclick="subtn('${item}')">-</button> <span id="val${item}"> ${cartlst[item][0]} </span> <button id="plus${item}" class="btn btn-primary plus adsub" onclick="addtn('${item}')">+</button>`
+      }
+    }
+  };
+
+  function prevbtn(id) {
+    document.getElementById('sp' + id).innerHTML = `<a class="btn btn-primary" onclick="addprd('${id}')">Add To Cart</a>`
+  };
+
+  function subtn(id) {
+    cartlst[id][0] = cartlst[id][0] - 1;
+    cartlst[id][0] = Math.max(0, cartlst[id][0]);
+    localStorage.setItem('cart', JSON.stringify(cartlst));
+    if (cartlst[id][0] == 0) {
+      prevbtn(id)
+    }
+    else {
+      document.getElementById('val' + id).innerHTML = cartlst[id][0];
+    }
+    allprd(cartlst);
+    updatebtn(cartlst);
+  };
+
+  function addtn(id) {
+    cartlst[id][0] = cartlst[id][0] + 1;
+    document.getElementById('val' + id).innerHTML = cartlst[id][0];
+    localStorage.setItem('cart', JSON.stringify(cartlst));
+    allprd(cartlst);
+    updatebtn(cartlst);
+  };
+
+  function clearcart() {
+    for (var item in cartlst) {
+      prevbtn(item);
+      delete cartlst[item];
+    }
+    localStorage.setItem('cart',JSON.stringify(cartlst));
+    allprd(cartlst);
+    updatebtn(cartlst);
+  };
+</script>
+{% endblock %}

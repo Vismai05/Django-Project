@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %} {% endblock %}</title>
+
+  {% block css %} {% endblock %}
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+  <style>
+    .inpt{
+      width: 500px !important;
+    }
+    @media screen and (max-width:1213px) {
+      .inpt{
+        width: 400px !important;
+      }
+    }
+    @media screen and (max-width:1115px) {
+      .inpt{
+        width: 270px !important;
+      }
+    }
+    @media screen and (max-width:994px) {
+      .collapse .arrow{
+        padding-left: 15px;
+      }
+      .collapse .lgout{
+        margin-top: 8px;
+      }
+    }
+    @media screen and (max-width:464px) {
+      .collapse .frm1{
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+      }
+      .collapse .inpt{
+        width: 150px !important;
+      }
+    }
+    @media screen and (max-width:327px) {
+      .dropbox{
+        width: 170px !important;
+      }
+      .dbtn{
+        font-size: 12px !important;
+        width: 70px !important;
+        padding: 10px 0px 10px 0px !important;
+        }
+        .dbtnlist{
+          display: flex !important;
+        }
+        .itminfo{
+          font-size: 12px !important;
+        }
+      }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <p class="text-white mx-3 d-flex" style="padding: 0px; margin:0px;">
+        Welcome,<br>
+        {% block user %}{% endblock %}
+      </p>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" id="homeactive" aria-current="page" href="/shop">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="aboutactive" href="/shop/about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="contactive" href="/shop/contact">Contact</a>
+          </li>
+          <li class="nav-item">
+            <div class="btn-group" style="display: flex;">
+              <a href="/shop/cart" class="nav-link" id="cartactive" type="button">
+                Cart(<span id="mycart">0</span>)
+              </a>
+              <a class="nav-link dropdown-toggle dropdown-toggle-split arrow" data-bs-toggle="dropdown" aria-expanded="false" style="position: relative; right: 10px;">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </a>
+              <ul class="dropdown-menu dropbox">
+                <li><a class="dropdown-item">Cart Details</a></li>
+                <span id="showprd">
+                  <li><a class="dropdown-item">Your Cart is Empty!</a></li>
+                </span>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="trackactive" href="/shop/tracker">Tracker</a>
+          </li>
+        </ul>
+        <form class="mx-5 d-flex frm1" role="search" method="get" action="/shop/search/">
+          <div class="input-group ">
+            <input type="text" class="form-control inpt" name="srch" aria-label="Search" aria-describedby="button-addon2">
+            <button class="btn btn-success" type="submit" id="button-addon2">Search</button>
+          </div>
+      </form>
+      <a href="/shop/logout" class="btn btn-warning lgout">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  {% block body %} {% endblock %}
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+  integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+<script>
+  var storage1 = localStorage.getItem('cart');
+  if (storage1 == null) {
+    cartlst = {};
+  }
+  else {
+    cartlst = JSON.parse(storage1);
+    updatebtn(cartlst);
+    allprd(cartlst)
+  }
+
+  function updatebtn(cartlst) {
+    var prdts = "";
+    var i = 1;
+    if (cartlst != null) {
+      for (var item in cartlst) {
+        if (cartlst[item][0] > 0) {
+          prdts = prdts + `<li><a class="dropdown-item itminfo"><b>${i}. </b> ${cartlst[item][1].slice(0, 15)}... Qty : ${cartlst[item][0]} </a></li>`;
+          i++;
+        }
+      }
+      prdts = prdts + `<li><hr class="dropdown-divider"></li>
+                    <li><div class="dropdown-item dbtnlist"><a href="/shop/checkout" class="btn btn-warning mx-1 dbtn">Checkout</a><a class="btn btn-danger mx-1 dbtn" onclick="clearcart()">Clear Cart</a></div></li>`;
+    }
+    else {
+      prdts = `<li><a class="dropdown-item">Your Cart is Empty!</a></li>`;
+    }
+    document.getElementById('showprd').innerHTML = prdts;
+  }
+
+  function clearcart() {
+    localStorage.clear();
+    emptycart = JSON.parse(localStorage.getItem('cart'));
+    allprd(emptycart);
+    updatebtn(emptycart);
+  }
+
+  function allprd(cartlst) {
+    let total_prd = 0;
+    for (var item in cartlst) {
+      total_prd = total_prd + cartlst[item][0]
+    }
+    document.getElementById('mycart').innerHTML = total_prd;
+  }
+</script>
+{% block js %}{% endblock %}
+
+</html>

@@ -1,0 +1,68 @@
+{% extends 'shop/dashboard.html' %}
+
+{% block title %} Order Tracker {% endblock %}
+
+{% block user %} {{uname}} {% endblock %}
+
+{% block body %}
+<div class="container">
+    <h2>Enter your order Id and Email To check order status</h2>
+    <form method="post" class="col-md-6">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="orderid" class="form-label">Order Id</label>
+            <input type="number" class="form-control" id="orderid" name="orderid">
+        </div>
+        <button type="submit" class="btn btn-info">Submit</button>
+    </form>
+    <br>
+    <h2>Order status</h2>
+    <div class="col-md-6">
+        <ul class="list-group">
+            {% if msg %}
+                <li class="list-group-item d-flex justify-content-between">{{msg}}</li>
+            {% elif status %}
+                {% for i in status %}
+                <li class="list-group-item d-flex justify-content-between">{{i.status}} <span class="badge text-bg-primary">{{i.time}}</span></li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item d-flex justify-content-between">Enter your order Id and Email address to get your order status and details</li>
+            {% endif %}
+        </ul>
+    </div>
+    <br>
+    {% if prd %}
+    <h2>Order Details</h2>
+    <div class="col-md-6">
+        <ul class="list-group">
+            
+            <span id="details">
+                <li class="list-group-item d-flex justify-content-between" id="prdlst">{{prd.items}}</li>
+            </span>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.getElementById('trackactive').classList.add('active');
+</script>
+    {% if prd %}
+    <script>
+        var display = document.getElementById('prdlst').innerHTML;
+        prd_details = JSON.parse(display);
+        keylst = Object.keys(prd_details);
+        addprd = ""
+        for (var i in keylst){
+            addprd = addprd + `<li class="list-group-item d-flex justify-content-between" id="prdlst">${prd_details[keylst[i]][1]}<span class="badge text-bg-primary">Qty: ${prd_details[keylst[i]][0]}</span></li>`
+        };
+        document.getElementById('details').innerHTML = addprd;
+    </script>
+    {% endif %}
+{% endblock %}

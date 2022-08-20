@@ -1,0 +1,416 @@
+{% extends 'shop/dashboard.html' %}
+
+{% block title %}Your Cart {% endblock %}
+
+{% block user %} {{uname}} {% endblock %}
+
+{% block css %}
+<style>
+    body {
+        margin-top: 20px;
+    }
+
+    .prdname{
+        font-size: 24px !important;
+        padding: 0px !important;
+    }
+
+    select.form-control:not([size]):not([multiple]) {
+        height: 44px;
+    }
+
+    select.form-control {
+        padding-right: 38px;
+        background-position: center right 17px;
+        background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNv…9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+        background-repeat: no-repeat;
+        background-size: 9px 9px;
+    }
+
+    .form-control:not(textarea) {
+        height: 44px;
+    }
+
+    .form-control {
+        padding: 0 18px 3px;
+        border: 1px solid #dbe2e8;
+        border-radius: 22px;
+        background-color: #fff;
+        color: #606975;
+        font-family: "Maven Pro", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    .shopping-cart,
+    .wishlist-table,
+    .order-table {
+        margin-bottom: 20px
+    }
+
+    .shopping-cart .table,
+    .wishlist-table .table,
+    .order-table .table {
+        margin-bottom: 0
+    }
+
+    .shopping-cart .btn,
+    .wishlist-table .btn,
+    .order-table .btn {
+        margin: 0
+    }
+
+    .shopping-cart>table>thead>tr>th,
+    .shopping-cart>table>thead>tr>td,
+    .shopping-cart>table>tbody>tr>th,
+    .shopping-cart>table>tbody>tr>td,
+    .wishlist-table>table>thead>tr>th,
+    .wishlist-table>table>thead>tr>td,
+    .wishlist-table>table>tbody>tr>th,
+    .wishlist-table>table>tbody>tr>td,
+    .order-table>table>thead>tr>th,
+    .order-table>table>thead>tr>td,
+    .order-table>table>tbody>tr>th,
+    .order-table>table>tbody>tr>td {
+        vertical-align: middle !important
+    }
+
+    .shopping-cart>table thead th,
+    .wishlist-table>table thead th,
+    .order-table>table thead th {
+        padding-top: 17px;
+        padding-bottom: 17px;
+        border-width: 1px
+    }
+
+    .shopping-cart .remove-from-cart,
+    .wishlist-table .remove-from-cart,
+    .order-table .remove-from-cart {
+        display: inline-block;
+        color: #ff5252;
+        font-size: 18px;
+        line-height: 1;
+        text-decoration: none
+    }
+
+    .shopping-cart .count-input,
+    .wishlist-table .count-input,
+    .order-table .count-input {
+        display: inline-block;
+        width: 100%;
+        width: 86px
+    }
+
+    .shopping-cart .product-item,
+    .wishlist-table .product-item,
+    .order-table .product-item {
+        display: table;
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 3px
+    }
+
+    .shopping-cart .product-item .product-thumb,
+    .shopping-cart .product-item .product-info,
+    .wishlist-table .product-item .product-thumb,
+    .wishlist-table .product-item .product-info,
+    .order-table .product-item .product-thumb,
+    .order-table .product-item .product-info {
+        display: table-cell;
+        vertical-align: top
+    }
+
+    .shopping-cart .product-item .product-thumb,
+    .wishlist-table .product-item .product-thumb,
+    .order-table .product-item .product-thumb {
+        width: 130px;
+        padding-right: 20px
+    }
+
+    .shopping-cart .product-item .product-thumb>img,
+    .wishlist-table .product-item .product-thumb>img,
+    .order-table .product-item .product-thumb>img {
+        display: block;
+        width: 100%
+    }
+
+    @media screen and (max-width: 860px) {
+
+        .shopping-cart .product-item .product-thumb,
+        .wishlist-table .product-item .product-thumb,
+        .order-table .product-item .product-thumb {
+            display: none
+        }
+    }
+
+    .shopping-cart .product-item .product-info span,
+    .wishlist-table .product-item .product-info span,
+    .order-table .product-item .product-info span {
+        display: block;
+        font-size: 13px
+    }
+
+    .shopping-cart .product-item .product-info span>em,
+    .wishlist-table .product-item .product-info span>em,
+    .order-table .product-item .product-info span>em {
+        font-weight: 500;
+        font-style: normal
+    }
+
+    .shopping-cart .product-item .product-title,
+    .wishlist-table .product-item .product-title,
+    .order-table .product-item .product-title {
+        margin-bottom: 6px;
+        padding-top: 5px;
+        font-size: 16px;
+        font-weight: 500
+    }
+
+    .shopping-cart .product-item .product-title>a,
+    .wishlist-table .product-item .product-title>a,
+    .order-table .product-item .product-title>a {
+        transition: color .3s;
+        color: #374250;
+        line-height: 1.5;
+        text-decoration: none
+    }
+
+    .shopping-cart .product-item .product-title>a:hover,
+    .wishlist-table .product-item .product-title>a:hover,
+    .order-table .product-item .product-title>a:hover {
+        color: #0da9ef
+    }
+
+    .shopping-cart .product-item .product-title small,
+    .wishlist-table .product-item .product-title small,
+    .order-table .product-item .product-title small {
+        display: inline;
+        margin-left: 6px;
+        font-weight: 500
+    }
+
+    .wishlist-table .product-item .product-thumb {
+        display: table-cell !important
+    }
+
+    @media screen and (max-width: 576px) {
+        .wishlist-table .product-item .product-thumb {
+            display: none !important
+        }
+    }
+
+    .shopping-cart-footer {
+        display: table;
+        width: 100%;
+        padding: 10px 0;
+        border-top: 1px solid #e1e7ec
+    }
+
+    .shopping-cart-footer>.column {
+        display: table-cell;
+        padding: 5px 0;
+        vertical-align: middle
+    }
+
+    .shopping-cart-footer>.column:last-child {
+        text-align: right
+    }
+
+    .shopping-cart-footer>.column:last-child .btn {
+        margin-right: 0;
+        margin-left: 15px
+    }
+
+    @media (max-width: 768px) {
+        .maintd{
+            width: 80px !important;
+        }
+        .shopping-cart-footer>.column {
+            display: block;
+            width: 100%
+        }
+
+        .shopping-cart-footer>.column:last-child {
+            text-align: center
+        }
+
+        .shopping-cart-footer>.column .btn {
+            width: 100%;
+            margin: 12px 0 !important
+        }
+        .prdname{
+            font-size: 14px !important;
+            padding: 0px !important;
+        }
+    }
+    @media (max-width: 387px) {
+        .adsubbtn{
+            width: 20px !important;
+            height: 30px !important;
+            padding: 0px !important;
+            margin: 0px !important;
+        }
+        .box2{
+            padding: 0px !important;
+            margin: 0px !important;
+        }
+        .mainbox{
+            padding: 0px !important;
+            margin: 0px !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% for i in products %}
+<span style="display: none;" id="img{{i.id}}"><img src="/media/{{i.prd_img}}" alt=""></span>
+{% endfor %}
+<div class="container padding-bottom-3x mb-1 mainbox">
+    <!-- Shopping Cart-->
+    <div class="table-responsive shopping-cart">
+        <table class="table" cell-padding="0" cell-spacing="0">
+            <thead>
+                <tr>
+                    <th class="mainth">Product Name</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-center">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="showcart">
+                <tr>
+                    <td>
+                        <h4 class="text-danger">Your Cart is Empty! Please add some products to it</h4>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="shopping-cart-footer">
+        <div class="column">
+        </div>
+        <div class="column text-lg">Subtotal: <span class="text-medium" id="cartamount">0</span></div>
+    </div>
+    <div class="shopping-cart-footer">
+        <div class="column">
+            <a class="btn btn-secondary" href="/shop">Back to Shopping</a>
+        </div>
+        <div class="column">
+            <a class="btn btn-outline-danger" onclick="clearcart()">Clear Cart</a>
+            <a class="btn btn-success" id="disabledcart" href="/shop/checkout">Checkout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.getElementById('cartactive').classList.add('active');
+
+    var storage5 = localStorage.getItem('cart');
+    if (storage5 == null) {
+        cartlst = {}
+        document.getElementById('disabledcart').classList.add('disabled');
+    }
+    else {
+        cartlst = JSON.parse(storage5);
+        mycart(cartlst);
+        allprd(cartlst);
+        document.getElementById('disabledcart').classList.remove('disabled');
+    }
+
+    function mycart(cartlst) {
+        if (cartlst == null){
+            document.getElementById('disabledcart').classList.add('disabled');
+        }
+        else{
+            document.getElementById('disabledcart').classList.remove('disabled');
+        }
+        var products = "";
+        var total_amount = 0;
+        var flag = 0;
+        for (var item in cartlst) {
+            total_amount = total_amount + (parseInt(cartlst[item][0]) * parseInt(cartlst[item][2]));
+            let prd_total = 0;
+            prd_total = (cartlst[item][0] * cartlst[item][2]);
+            if (cartlst[item][0] > 0) {
+                flag++;
+                products = products + `<tr id='row${cartlst[item]}'>
+                        <td>
+                            <div class="product-item">
+                                <a class="product-thumb" href="product/${item}">${document.getElementById('img' + item).innerHTML}</a>
+                                <div class="product-info nametd">
+                                    <p class="product-title"><a href="product/${item}" class="prdname">${cartlst[item][1]}</a></p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="box2">
+                                <button class="btn btn-danger minus adsubbtn" onclick="subtn('${item}')">-</button>
+                                <span id="val${item}">${cartlst[item][0]}</span>
+                                <button class="btn btn-success plus adsubbtn" onclick="addtn('${item}')">+</button>
+                            </div>
+                        </td>
+                        <td class="text-center text-lg text-medium prdname">&#8377 ${prd_total}</td>
+                    </tr>`;
+            }
+        }
+        if (flag==0){
+            document.getElementById('disabledcart').classList.add('disabled');
+            products = `<tr>
+                    <td>
+                        <h4 class="text-danger">Your Cart is Empty! Please add some products to it</h4>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>`;
+        }
+        else{
+            document.getElementById('disabledcart').classList.remove('disabled');
+        }
+        document.getElementById('showcart').innerHTML = products;
+        document.getElementById('cartamount').innerHTML = total_amount;
+        updatebtn(cartlst);
+    }
+    function subtn(id) {
+        cartlst[id][0] = cartlst[id][0] - 1;
+        cartlst[id][0] = Math.max(0, cartlst[id][0]);
+        localStorage.setItem('cart', JSON.stringify(cartlst));
+        if (cartlst[id][0] > 0) {
+            document.getElementById('val' + id).innerHTML = cartlst[id][0];
+        }
+        mycart(cartlst);
+        updatebtn(cartlst);
+        allprd(cartlst);
+    };
+
+    function addtn(id) {
+        cartlst[id][0] = cartlst[id][0] + 1;
+        document.getElementById('val' + id).innerHTML = cartlst[id][0];
+        localStorage.setItem('cart', JSON.stringify(cartlst));
+        allprd(cartlst);
+        mycart(cartlst);
+        updatebtn(cartlst);
+    };
+
+    function clearcart() {
+        localStorage.clear();
+        emptycart = JSON.parse(localStorage.getItem('cart'));
+        mycart(emptycart);
+        updatebtn(emptycart);
+        allprd(emptycart);
+        products = `<tr>
+                    <td>
+                        <h4 class="text-danger">Your Cart is Empty! Please add some products to it</h4>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>`;
+        document.getElementById('showcart').innerHTML = products;
+    }
+</script>
+{% endblock %}

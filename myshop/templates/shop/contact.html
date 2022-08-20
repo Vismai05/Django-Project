@@ -1,0 +1,63 @@
+{% extends 'shop/dashboard.html' %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block css %}
+<style>
+  .container{
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 30px 2px black;
+  }
+  .box2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .sbtn{
+    width: 200px;
+  }
+</style>
+{% endblock %}
+
+{% block user %} {{uname}} {% endblock %}
+
+{% block body %}
+<div class="container col-md-8 my-3">
+    <h1 class="text-center text-dark">Leave Us a Message</h1>
+    <form action="/shop/contact" method="post" style="padding: 0px 40px 0px 40px;">
+        {% csrf_token %} 
+        <div class="mb-3">
+          <label for="name" class="form-label">Name :</label>
+          <input type="text" class="form-control" id="name" name="name" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email :</label>
+          <input type="email" class="form-control" id="email" name="mail">
+        </div>
+        <div class="mb-3">
+          <label for="number" class="form-label">Contact :</label>
+          <input type="tel" class="form-control" id="number" name="phone">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Message :</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="msg"></textarea>
+        </div>
+        <div class="box2">
+          <button type="submit" class="btn btn-info sbtn">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+  <script>
+    document.getElementById('contactive').classList.add('active');
+  </script>
+  {% if msg %}
+    <script>
+      alert('Your message has been sent. Thank you for your response')
+      document.location = "/shop"
+    </script>
+  {% endif %}
+{% endblock %}
