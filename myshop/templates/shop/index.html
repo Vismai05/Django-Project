@@ -70,7 +70,7 @@
           <div class="card">
             <img src="/media/{{i.prd_img}}" class="card-img-top" alt="...">
             <div class="card-body">
-              <h5 class="card-title" id="name{{i.id}}">{{i.prd_name}}</h5>
+              <h5 class="card-title" id="name{{i.id}}">{{i.prd_name|slice:"0:20"}}...</h5>
               <p class="card-text">{{i.prd_des|slice:"0:50"}}.....</p>
               <p class="card-text"><b>&#8377 <span id="price{{i.id}}">{{i.prd_cost}}</span></b></p>
               <span id="sp{{i.id}}" class="clearchanges">
