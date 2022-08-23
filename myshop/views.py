@@ -19,6 +19,7 @@ def index(request):
         p = len(products)
         nslide = p//4 + ceil((p/4)-(p//4))
         datalst.append([products,range(1,nslide),nslide])
+        print(products)
     data = {'lst':datalst,'uname':request.session['username']}
     return render(request,'shop/index.html',data)
 
@@ -62,7 +63,6 @@ def product(request, id):
     else:
         request.session['recent_prd'] = [id]
     request.session.modified = True
-    # print(recent)
     return render(request,'shop/productview.html',{'prd':prd,'uname':request.session['username'],'recent':recent})
 
 @login_required(login_url='login')

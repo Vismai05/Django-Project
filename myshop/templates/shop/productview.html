@@ -9,6 +9,16 @@
     .col-md-4 img {
         width: 400px;
     }
+    #recentprd{
+        position: relative;
+        top: 60px;
+        margin: auto !important;
+    }
+    @media screen and (max-width: 1400px) {
+        .col-md-4 img{
+            width: 350px;
+        }
+    }
     @media screen and (max-width: 1200px) {
         .col-md-4 img{
             width: 300px;
@@ -50,12 +60,12 @@
     </div>
 </div>
 {% if recent %}
-<div class="container col-5 my-4" id="recentprd">
+<div class="col-5 my-2 mx-5" id="recentprd">
     <h3>Recently Viewed</h3>
     <div style="display: flex; flex-wrap: wrap;">
         {% for i in recent|slice:'0:5' %}
         <a href="/shop/product/{{i.id}}" style="margin: auto;">
-            <img src="/media/{{i.prd_img}}" alt="" style="width: 100px;">
+            <img src="/media/{{i.prd_img}}" style="width: 100px;">
         </a>
         {% endfor %}
     </div>
