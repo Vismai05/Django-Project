@@ -1,1 +1,0 @@
-web gunicorn Awsomecart.wsgi:application --log-file -
