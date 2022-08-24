@@ -19,7 +19,6 @@ def index(request):
         p = len(products)
         nslide = p//4 + ceil((p/4)-(p//4))
         datalst.append([products,range(1,nslide),nslide])
-        print(products)
     data = {'lst':datalst,'uname':request.session['username']}
     return render(request,'shop/index.html',data)
 
