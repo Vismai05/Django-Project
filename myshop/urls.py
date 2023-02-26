@@ -12,5 +12,6 @@ urlpatterns = [
     path('checkout',views.checkout,name="checkout"),
     path('login',views.lgnpage,name="login"),
     path('register',views.register,name="register"),
-    path('logout',views.lgoutpage,name="logout")
+    path('logout',views.lgoutpage,name="logout"),
+    path('filter/<str:param>',views.pricefilter,name="price")
 ]

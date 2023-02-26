@@ -22,6 +22,26 @@ def index(request):
     data = {'lst':datalst,'uname':request.session['username']}
     return render(request,'shop/index.html',data)
 
+@login_required(login_url='login')
+def pricefilter(request,param):
+    datalst = []
+    specificdata = prdlist.objects.values('prd_cost','id')
+    if param == 'B1000':
+        cats = {x['prd_cost'] for x in specificdata if x['prd_cost'] < 1000}
+    elif param == 'B2000':
+        cats = {x['prd_cost'] for x in specificdata if x['prd_cost'] < 2000}
+    else: 
+        cats = {x['prd_cost'] for x in specificdata if x['prd_cost'] > 2000}
+    print(cats)
+    for i in cats:
+        products = prdlist.objects.filter(prd_cost=i)
+        print(products)
+        p = len(products)
+        nslide = p//4 + ceil((p/4)-(p//4))
+        datalst.append([products,range(1,nslide),nslide])
+    data = {'lst':datalst,'uname':request.session['username']}
+    return render(request,'shop/index.html',data)
+
 def search_result(stxt, prd):
     txt = stxt.lower() 
     print(prd.prd_name.lower())

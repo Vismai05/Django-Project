@@ -116,6 +116,16 @@
       </div>
     </div>
   </nav>
+  <div class="btn-group float-end mx-2 my-3">
+    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Price Filter
+    </button>
+    <ul class="dropdown-menu">
+      <ul class="dropdown-item"><a href="/shop/filter/B1000" style="text-decoration: none;">Below 1000</a></ul>
+      <ul class="dropdown-item"><a href="/shop/filter/B2000" style="text-decoration: none;">Below 2000</a></ul>
+      <ul class="dropdown-item"><a href="/shop/filter/A2000" style="text-decoration: none;">2000 +</a></ul>
+    </ul>
+  </div>
 
   {% block body %} {% endblock %}
 </body>
