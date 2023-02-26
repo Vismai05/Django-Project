@@ -25,17 +25,39 @@ def index(request):
 @login_required(login_url='login')
 def pricefilter(request,param):
     datalst = []
-    specificdata = prdlist.objects.values('prd_cost','id')
+    specificdata = prdlist.objects.values('prd_cost','prd_cat','id')
+    prd_cat = []
+    cats = {}
     if param == 'B1000':
-        cats = {x['prd_cost'] for x in specificdata if x['prd_cost'] < 1000}
+        for i in specificdata:
+            if i['prd_cost'] < 1000:
+                if i['prd_cat'] not in prd_cat:
+                    cats[i['prd_cat']] = []
+                    cats[i['prd_cat']].append(i['id'])
+                    prd_cat.append(i['prd_cat'])
+                else:
+                    cats[i['prd_cat']].append(i['id'])
     elif param == 'B2000':
-        cats = {x['prd_cost'] for x in specificdata if x['prd_cost'] < 2000}
+        for i in specificdata:
+            if i['prd_cost'] < 2000:
+                if i['prd_cat'] not in prd_cat:
+                    cats[i['prd_cat']] = []
+                    cats[i['prd_cat']].append(i['id'])
+                    prd_cat.append(i['prd_cat'])
+                else:
+                    cats[i['prd_cat']].append(i['id'])
     else: 
-        cats = {x['prd_cost'] for x in specificdata if x['prd_cost'] > 2000}
-    print(cats)
+        for i in specificdata:
+            if i['prd_cost'] > 2000:
+                if i['prd_cat'] not in prd_cat:
+                    cats[i['prd_cat']] = []
+                    cats[i['prd_cat']].append(i['id'])
+                    prd_cat.append(i['prd_cat'])
+                else:
+                    cats[i['prd_cat']].append(i['id'])
+
     for i in cats:
-        products = prdlist.objects.filter(prd_cost=i)
-        print(products)
+        products = prdlist.objects.filter(prd_cat=i,id__in=cats[i])
         p = len(products)
         nslide = p//4 + ceil((p/4)-(p//4))
         datalst.append([products,range(1,nslide),nslide])
@@ -43,8 +65,7 @@ def pricefilter(request,param):
     return render(request,'shop/index.html',data)
 
 def search_result(stxt, prd):
-    txt = stxt.lower() 
-    print(prd.prd_name.lower())
+    txt = stxt.lower()
     if (txt in prd.prd_name.lower() or txt in prd.prd_cat.lower() or txt in prd.prd_subcat.lower() or txt in prd.prd_des.lower()):
         return True
     else:
